@@ -1,0 +1,5 @@
+.vs/*
+Debug/*
+x64/*
+SDL2.dll
+Pikuma3D.vcxproj*
