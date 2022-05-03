@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <SDL.h>
+
+#define WIN_HEIGHT 600
+#define WIN_WIDTH 800
 
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+
 bool is_running = false;
+uint32_t* color_buffer = NULL;
 
 void print(const char* message) {
 	fprintf(stderr, message);
@@ -22,8 +28,8 @@ bool initialize_window(void)
 		NULL,
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		800,
-		600,
+		WIN_WIDTH,
+		WIN_HEIGHT,
 		SDL_WINDOW_BORDERLESS );
 	
 	if (!window) {
@@ -42,7 +48,11 @@ bool initialize_window(void)
 	return true;
 }
 
-void setup() {
+void setup(void) {
+	color_buffer = malloc(sizeof(uint32_t) * WIN_WIDTH * WIN_HEIGHT);
+	if (!color_buffer) {
+		print("Error allocating the demanded memory space using mallooc(). \n");
+	}
 
 }
 
@@ -61,8 +71,6 @@ void process_input(void) {
 		}
 
 	}
-
-
 }
 
 void update() {
@@ -75,6 +83,14 @@ void render() {
 	SDL_RenderClear(renderer);
 
 	SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call (Backbuffer)
+}
+
+void destroy_window(void) {
+
+	free(color_buffer);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 }
 
 
@@ -91,5 +107,7 @@ int main(int argc, char* argv[])
 		update();
 		render();
 	}
+
+	destroy_window();
 	return 0;
 }
