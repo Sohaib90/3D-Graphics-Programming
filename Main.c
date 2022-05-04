@@ -3,12 +3,12 @@
 #include <stdint.h>
 #include <SDL.h>
 
-#define WIN_HEIGHT 600
-#define WIN_WIDTH 800
-
 SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
+SDL_Texture* color_buffer_texture = NULL;
 
+int WIN_HEIGHT = 0;
+int WIN_WIDTH = 0;
 bool is_running = false;
 uint32_t* color_buffer = NULL;
 
@@ -23,6 +23,13 @@ bool initialize_window(void)
 		return false;
 	}
 
+	// Query SDL to find the maximum resolution of the monitor/window being used
+	// This converts the full screen referred to as fake full screen
+	SDL_DisplayMode display_mode;
+	SDL_GetCurrentDisplayMode(0, &display_mode);
+	WIN_HEIGHT = display_mode.h;
+	WIN_WIDTH = display_mode.w;
+
 	// create an SDL Window
 	window = SDL_CreateWindow(
 		NULL,
@@ -30,7 +37,7 @@ bool initialize_window(void)
 		SDL_WINDOWPOS_CENTERED,
 		WIN_WIDTH,
 		WIN_HEIGHT,
-		SDL_WINDOW_BORDERLESS );
+		SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN_DESKTOP);
 	
 	if (!window) {
 		print("Error Initializing SDL window. \n");
@@ -50,9 +57,21 @@ bool initialize_window(void)
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * WIN_WIDTH * WIN_HEIGHT);
+
 	if (!color_buffer) {
 		print("Error allocating the demanded memory space using mallooc(). \n");
 	}
+
+	// Creating a SDL texture that is used to display the color buffer
+	color_buffer_texture = SDL_CreateTexture (
+		renderer,
+		SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING,
+		WIN_WIDTH, 
+		WIN_HEIGHT
+	);
+
+
 
 }
 
@@ -77,12 +96,51 @@ void update() {
 
 }
 
+void clear_color_buffer(uint32_t color) {
+	for (size_t y = 0; y < WIN_HEIGHT; y++)
+	{
+		for (size_t x = 0; x < WIN_WIDTH; x++)
+		{
+			color_buffer[WIN_WIDTH * y + x] = color;
+		}
+	}
+}
+
+void render_color_buffer() {
+
+	// Bind te texture with color buffer
+	if (SDL_UpdateTexture(
+		color_buffer_texture,
+		NULL, 
+		color_buffer, 
+		(int)(WIN_WIDTH * sizeof(uint32_t))
+	)) 
+	{
+		print("Failed to UpdateTexture.\n");
+	}
+
+	// Copy the texture to the renderer
+	if (SDL_RenderCopy(
+		renderer,
+		color_buffer_texture,
+		NULL,
+		NULL
+	)) 
+	{
+		print("Failed to Render copy the texture to the renderer.\n");
+	}
+}
+
 void render() {
 
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
+	render_color_buffer();
+	clear_color_buffer(0xFFFFFF00);
+
 	SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call (Backbuffer)
+
 }
 
 void destroy_window(void) {
