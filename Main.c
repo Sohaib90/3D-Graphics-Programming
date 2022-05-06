@@ -70,9 +70,6 @@ void setup(void) {
 		WIN_WIDTH, 
 		WIN_HEIGHT
 	);
-
-
-
 }
 
 void process_input(void) {
@@ -92,6 +89,7 @@ void process_input(void) {
 	}
 }
 
+
 void update() {
 
 }
@@ -102,6 +100,29 @@ void clear_color_buffer(uint32_t color) {
 		for (size_t x = 0; x < WIN_WIDTH; x++)
 		{
 			color_buffer[WIN_WIDTH * y + x] = color;
+		}
+	}
+}
+
+void draw_grid(uint32_t background, uint32_t line_color) {
+	
+	clear_color_buffer(background);
+
+	for (size_t i = 0, width = WIN_WIDTH; i < width; i+=10)
+	{
+		for (size_t j = 0, height = WIN_HEIGHT; j < height; j++)
+		{
+			color_buffer[WIN_WIDTH * j + i] = line_color;
+		}
+	}
+
+
+	for (size_t i = 0, height = WIN_HEIGHT; i < height; i += 10)
+	{
+		for (size_t j = 0, width = WIN_WIDTH; j < width; j++)
+		{
+			if (color_buffer[WIN_WIDTH * i + j] != line_color)
+				color_buffer[WIN_WIDTH * i + j] = line_color;
 		}
 	}
 }
@@ -136,8 +157,8 @@ void render() {
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
+	draw_grid(0x000000, 0xFFFFFF);
 	render_color_buffer();
-	clear_color_buffer(0xFFFFFF00);
 
 	SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call (Backbuffer)
 
