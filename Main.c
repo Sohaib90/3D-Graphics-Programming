@@ -127,8 +127,7 @@ void draw_grid(uint32_t background, uint32_t line_color, int offset) {
 	}
 }
 
-void draw_rect(int x, int y, int width, int height, uint32_t color, uint32_t background) {
-	clear_color_buffer(background);
+void draw_rect(int x, int y, int width, int height, uint32_t color) {
 
 	for (size_t i = y; i < y + height; i++)
 	{
@@ -170,8 +169,8 @@ void render() {
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
-	// draw_grid(0x000000, 0xFFFFFF, 50);
-	draw_rect(WIN_WIDTH/2 - 250, WIN_HEIGHT/2, 500, 100, 0x0085ca, 0x000000);
+	draw_grid(0x000000, 0xFFFFFF, 50);
+	draw_rect(WIN_WIDTH/2 - 250, WIN_HEIGHT/2, 500, 100, 0x0085ca);
 	render_color_buffer();
 
 	SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call (Backbuffer)
