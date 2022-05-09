@@ -23,5 +23,6 @@ void render_color_buffer();
 void clear_color_buffer(uint32_t color);
 void destroy_window(void);
 void print(const char* message);
+void render_string(const char* message, const int x, const int y, const int height, const int width, const uint32_t color);
 
 #endif

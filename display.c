@@ -36,6 +36,7 @@ bool initialize_window(void)
 		WIN_HEIGHT,
 		SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN_DESKTOP);
 
+
 	if (!window) {
 		print("Error Initializing SDL window. \n");
 		return false;
@@ -126,4 +127,47 @@ void destroy_window(void) {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+}
+
+void render_string(const char* message, const int x, const int y, const int height, const int width, const uint32_t color) {
+	/* 
+		Given a string, its location and font, render the text using buffer 
+	*/
+	int pos_x = x;
+
+	for (size_t i = 0; i < strlen(message); i++)
+	{
+
+		if (message[i] == 'H') {
+
+			for (size_t j = y; j <  y + height; j++)
+			{
+				color_buffer[WIN_WIDTH * j + (pos_x)] = color;
+				color_buffer[WIN_WIDTH * j + (pos_x + 1)] = color;
+				color_buffer[WIN_WIDTH * j + (pos_x + 2)] = color;
+			}
+			pos_x += 3;
+
+			for (size_t j = 0; j < 3; j++)
+			{
+				for (size_t k = 0; k < 20; k++)
+				{
+					color_buffer[(WIN_WIDTH * (y + (height / 2) + j)) + (pos_x + k)] = color;
+				}
+			}
+
+			pos_x += 20;
+			for (size_t j = y; j < y + height; j++)
+			{
+				color_buffer[WIN_WIDTH * j + (pos_x)] = color;
+				color_buffer[WIN_WIDTH * j + (pos_x + 1)] = color;
+				color_buffer[WIN_WIDTH * j + (pos_x + 2)] = color;
+			}
+
+		}
+
+		pos_x += 30;
+	}
+
+
 }

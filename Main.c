@@ -46,7 +46,8 @@ void render(int move_x) {
 
 	clear_color_buffer(0x000000);
 	//draw_grid(0xFFFFFF, 50);
-	draw_rect(WIN_WIDTH/2 - 250 + move_x, WIN_HEIGHT/2, 500, 100, 0x0085ca);
+	//draw_rect(WIN_WIDTH/2 - 250 + move_x, WIN_HEIGHT/2, 500, 100, 0x0085ca);
+	render_string("H", 200, 200, 150, 100, 0x0085ca);
 	render_color_buffer();
 
 	SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call (Backbuffer)
