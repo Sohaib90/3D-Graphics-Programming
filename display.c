@@ -54,7 +54,7 @@ bool initialize_window(void)
 }
 
 void clear_color_buffer(uint32_t color) {
-	for (size_t y = 0; y < WIN_HEIGHT; y++)
+	for (uint32_t y = 0; y < WIN_HEIGHT; y++)
 	{
 		for (size_t x = 0; x < WIN_WIDTH; x++)
 		{
@@ -134,40 +134,73 @@ void render_string(const char* message, const int x, const int y, const int heig
 		Given a string, its location and font, render the text using buffer 
 	*/
 	int pos_x = x;
+	char* print_type = "normal";
 
 	for (size_t i = 0; i < strlen(message); i++)
 	{
 
 		if (message[i] == 'H') {
 
-			for (size_t j = y; j <  y + height; j++)
-			{
-				color_buffer[WIN_WIDTH * j + (pos_x)] = color;
-				color_buffer[WIN_WIDTH * j + (pos_x + 1)] = color;
-				color_buffer[WIN_WIDTH * j + (pos_x + 2)] = color;
-			}
-			pos_x += 3;
-
-			for (size_t j = 0; j < 3; j++)
-			{
-				for (size_t k = 0; k < 20; k++)
+			if (print_type != "bold") {
+				for (size_t j = y; j < y + height; j++)
 				{
-					color_buffer[(WIN_WIDTH * (y + (height / 2) + j)) + (pos_x + k)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 1)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 2)] = color;
 				}
-			}
+				pos_x += 3;
 
-			pos_x += 20;
-			for (size_t j = y; j < y + height; j++)
-			{
-				color_buffer[WIN_WIDTH * j + (pos_x)] = color;
-				color_buffer[WIN_WIDTH * j + (pos_x + 1)] = color;
-				color_buffer[WIN_WIDTH * j + (pos_x + 2)] = color;
+				for (size_t j = 0; j < 3; j++)
+				{
+					for (size_t k = 0; k < 20; k++)
+					{
+						color_buffer[(WIN_WIDTH * (y + (height / 2) + j)) + (pos_x + k)] = color;
+					}
+				}
+
+				pos_x += 20;
+				for (size_t j = y; j < y + height; j++)
+				{
+					color_buffer[WIN_WIDTH * j + (pos_x)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 1)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 2)] = color;
+				}
+				pos_x += 3;
+			}
+			else {
+				for (size_t j = y; j < y + height; j++)
+				{
+					color_buffer[WIN_WIDTH * j + (pos_x)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 1)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 2)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 3)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 4)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 5)] = color;
+				}
+				pos_x += 6;
+
+				for (size_t j = 0; j < 6; j++)
+				{
+					for (size_t k = 0; k < 20; k++)
+					{
+						color_buffer[(WIN_WIDTH * (y + (height / 2) + j)) + (pos_x + k)] = color;
+					}
+				}
+
+				pos_x += 20;
+				for (size_t j = y; j < y + height; j++)
+				{
+					color_buffer[WIN_WIDTH * j + (pos_x)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 1)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 2)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 3)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 4)] = color;
+					color_buffer[WIN_WIDTH * j + (pos_x + 5)] = color;
+				}
+				pos_x += 6;
 			}
 
 		}
-
-		pos_x += 30;
 	}
-
 
 }
