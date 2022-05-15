@@ -1,4 +1,5 @@
 #include "display.h"
+#include "vector.h"
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * WIN_WIDTH * WIN_HEIGHT);
@@ -63,6 +64,8 @@ int main(int argc, char* argv[])
 	int move_x = 0;
 
 	setup();
+
+	vec3_t myvec = { 1.0, 2.3, 4.5 };
 
 	while (is_running) {
 		process_input();
