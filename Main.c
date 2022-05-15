@@ -1,9 +1,11 @@
 #include "display.h"
 #include "vector.h"
 
-#define N_POINTS (9*9*9)
+#define N_POINTS (9*9*9) 
 vec3_t cube_points[N_POINTS]; // 9x9x9 cube [-1, 1]
+vec2_t proj_cube_points[N_POINTS];
 bool is_running = true;
+float fov_factor = 128; // to scale pixels in the screen
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * WIN_WIDTH * WIN_HEIGHT);
@@ -22,7 +24,6 @@ void setup(void) {
 	);
 
 	int point_count = 0;
-
 	// start loading array of vectors
 	for (float x = -1; x <= 1; x+= 0.25){
 		for (float y = -1; y <= 1; y += 0.25) {
@@ -48,24 +49,42 @@ void process_input(void) {
 			is_running = false;
 			break;
 		}
-
 	}
 }
+
+/* function recieves 3D vector and return a 2D projected point */
+vec2_t naive_ortho_project(const vec3_t point) {
+	vec2_t projected_point = { .x = fov_factor * point.x, .y = fov_factor * point.y };
+	return projected_point;
+}	
 
 
 void update() {
 
+	/* project all vec3_t to vec2_t for projection (orthographic)*/
+	for (int i = 0; i < N_POINTS; i++){
+		vec3_t point = cube_points[i];
+		// project the given point 
+		proj_cube_points[i] = naive_ortho_project(point);
+	}
 }
 
 void render(int move_x) {
-
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	SDL_RenderClear(renderer);
 
 	//draw_grid(0xFFFFFF, 50);
 	//draw_rect(WIN_WIDTH/2 - 250 + move_x, WIN_HEIGHT/2, 500, 100, 0x0085ca);
 	//render_string("HELLO ALL!", WIN_WIDTH/2 - 250, WIN_HEIGHT / 2 - 250, 250, 100, 0x0085ca, "bold");
 	//draw_pixel(20, 20, 0xFFFFFF00);
+	
+	// Render projected points
+	for (int i = 0; i < N_POINTS; i++){
+		vec2_t proj_point = proj_cube_points[i] ;
+		draw_rect(proj_point.x + WIN_WIDTH / 2, // translating
+				  proj_point.y + WIN_HEIGHT / 2, // translating 
+				  4, 4, 
+				  0xFFFFFF00);
+	}
+
 	render_color_buffer();
 	clear_color_buffer(0x000000);
 

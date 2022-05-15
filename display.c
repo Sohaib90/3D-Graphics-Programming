@@ -85,20 +85,15 @@ void draw_grid(uint32_t line_color, int offset) {
 
 void draw_rect(int x, int y, int width, int height, uint32_t color) {
 
-	for (size_t i = y; i < y + height; i++)
-	{
+	for (size_t i = y; i < y + height; i++){
 		for (size_t j = x; j < x + width; j++)
-		{
-			color_buffer[WIN_WIDTH * i + j] = color;
-
-		}
+			draw_pixel(j, i, color);
 	}
 }
 
 void draw_pixel(int x, int y, uint32_t color) {
-	if (x < WIN_WIDTH && y < WIN_HEIGHT) {
+	if (x >= 0 && x < WIN_WIDTH && y >= 0 && y < WIN_HEIGHT)
 		color_buffer[WIN_WIDTH * y + x] = color;
-	}
 }
 
 void render_color_buffer() {
