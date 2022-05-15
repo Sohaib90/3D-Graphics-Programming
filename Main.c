@@ -5,7 +5,9 @@
 vec3_t cube_points[N_POINTS]; // 9x9x9 cube [-1, 1]
 vec2_t proj_cube_points[N_POINTS];
 bool is_running = true;
-float fov_factor = 128; // to scale pixels in the screen
+float fov_factor = 640; // to scale pixels in the screen
+
+vec3_t camera_pos = {.x = 0, .y = 0, .z = -5};
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * WIN_WIDTH * WIN_HEIGHT);
@@ -58,14 +60,25 @@ vec2_t naive_ortho_project(const vec3_t point) {
 	return projected_point;
 }	
 
+/* function for the perspective projection of 3D points into 2D*/
+vec2_t perspective_project(const vec3_t point) {
+	vec2_t pers_proj_point = {
+		.x = (fov_factor * point.x) / point.z,
+		.y = (fov_factor * point.y) / point.z
+	};
+	return pers_proj_point;
+}
+
 
 void update() {
 
 	/* project all vec3_t to vec2_t for projection (orthographic)*/
 	for (int i = 0; i < N_POINTS; i++){
 		vec3_t point = cube_points[i];
+		// move the points away from the camera
+		point.z -= camera_pos.z;
 		// project the given point 
-		proj_cube_points[i] = naive_ortho_project(point);
+		proj_cube_points[i] = perspective_project(point);
 	}
 }
 
