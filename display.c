@@ -96,6 +96,12 @@ void draw_rect(int x, int y, int width, int height, uint32_t color) {
 	}
 }
 
+void draw_pixel(int x, int y, uint32_t color) {
+	if (x < WIN_WIDTH && y < WIN_HEIGHT) {
+		color_buffer[WIN_WIDTH * y + x] = color;
+	}
+}
+
 void render_color_buffer() {
 
 	// Bind te texture with color buffer
@@ -438,3 +444,4 @@ void render_string(const char* message,
 	}
 
 }
+

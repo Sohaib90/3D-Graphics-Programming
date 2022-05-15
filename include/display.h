@@ -19,11 +19,13 @@ extern uint32_t* color_buffer;
 bool initialize_window(void);
 void draw_grid(uint32_t line_color, int offset);
 void draw_rect(int x, int y, int width, int height, uint32_t color);
+void draw_pixel(int x, int y, uint32_t color);
 void render_color_buffer();
 void clear_color_buffer(uint32_t color);
 void destroy_window(void);
 void print(const char* message);
 void render_string(const char* message, const int x, const int y, const int height, const int width, 
 				   const uint32_t color, const char* font_style);
+
 
 #endif

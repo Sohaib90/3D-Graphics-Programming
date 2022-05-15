@@ -44,11 +44,12 @@ void render(int move_x) {
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
-	clear_color_buffer(0x000000);
 	//draw_grid(0xFFFFFF, 50);
-	//draw_rect(WIN_WIDTH/2 - 250 + move_x, WIN_HEIGHT/2, 500, 100, 0x0085ca);
-	render_string("HELLO ALL!", WIN_WIDTH/2 - 250, WIN_HEIGHT / 2 - 250, 250, 100, 0x0085ca, "bold");
+	draw_rect(WIN_WIDTH/2 - 250 + move_x, WIN_HEIGHT/2, 500, 100, 0x0085ca);
+	//render_string("HELLO ALL!", WIN_WIDTH/2 - 250, WIN_HEIGHT / 2 - 250, 250, 100, 0x0085ca, "bold");
+	draw_pixel(20, 20, 0xFFFFFF00);
 	render_color_buffer();
+	clear_color_buffer(0x000000);
 
 	SDL_RenderPresent(renderer); // Update the screen with any rendering performed since the previous call (Backbuffer)
 
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
 		process_input();
 		update();
 		render(move_x);
-		move_x++;
+		//move_x++;
 	}
 
 	destroy_window();
