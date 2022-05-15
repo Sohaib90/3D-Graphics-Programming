@@ -6,7 +6,6 @@ SDL_Texture* color_buffer_texture = NULL;
 
 int WIN_HEIGHT = 600;
 int WIN_WIDTH = 800;
-bool is_running = true;
 uint32_t* color_buffer = NULL;
 
 void print(const char* message) {
