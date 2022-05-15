@@ -7,7 +7,7 @@ vec2_t proj_cube_points[N_POINTS];
 bool is_running = true;
 float fov_factor = 640; // to scale pixels in the screen
 
-vec3_t camera_pos = {.x = 0, .y = 0, .z = -5};
+vec3_t camera_pos = {.x = 0, .y = 0, .z = -5}; // setting camera at (0,0,-5)
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * WIN_WIDTH * WIN_HEIGHT);
