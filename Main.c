@@ -71,6 +71,11 @@ vec2_t perspective_project(const vec3_t point) {
 
 
 void update() {
+	/* 
+		apply a linear transformation before projecting 
+		This can be rotation, translation or scale
+	*/
+	
 
 	/* project all vec3_t to vec2_t for projection (orthographic)*/
 	for (int i = 0; i < N_POINTS; i++){
@@ -82,7 +87,7 @@ void update() {
 	}
 }
 
-void render(int move_x) {
+void render() {
 
 	//draw_grid(0xFFFFFF, 50);
 	//draw_rect(WIN_WIDTH/2 - 250 + move_x, WIN_HEIGHT/2, 500, 100, 0x0085ca);
@@ -110,15 +115,13 @@ int main(int argc, char* argv[])
 {
 	
 	is_running = initialize_window();
-	int move_x = 0;
 
 	setup();
 
 	while (is_running) {
 		process_input();
 		update();
-		render(move_x);
-		//move_x++;
+		render();
 	}
 
 	destroy_window();
