@@ -8,6 +8,7 @@ bool is_running = true;
 float fov_factor = 640; // to scale pixels in the screen
 
 vec3_t camera_pos = {.x = 0, .y = 0, .z = -5}; // setting camera at (0,0,-5)
+vec3_t cube_rotation = { .x = 0, .y = 0, .z = 0 }; // for degree of freedom (to increase/decrease)
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * WIN_WIDTH * WIN_HEIGHT);
@@ -75,15 +76,21 @@ void update() {
 		apply a linear transformation before projecting 
 		This can be rotation, translation or scale
 	*/
-	
+	cube_rotation.x += 0.005f;
+	cube_rotation.y += 0.005f;
+	cube_rotation.z += 0.005f;
 
 	/* project all vec3_t to vec2_t for projection (orthographic)*/
 	for (int i = 0; i < N_POINTS; i++){
 		vec3_t point = cube_points[i];
+		// transform the point 
+		vec3_t transformed_point = vec3_rotate_x(point, cube_rotation.x);
+		transformed_point = vec3_rotate_y(transformed_point, cube_rotation.y);
+		transformed_point = vec3_rotate_z(transformed_point, cube_rotation.z);
 		// move the points away from the camera
-		point.z -= camera_pos.z;
+		transformed_point.z -= camera_pos.z;
 		// project the given point 
-		proj_cube_points[i] = perspective_project(point);
+		proj_cube_points[i] = perspective_project(transformed_point);
 	}
 }
 
@@ -119,6 +126,7 @@ int main(int argc, char* argv[])
 	setup();
 
 	while (is_running) {
+		/* game loop: one frame execution */
 		process_input();
 		update();
 		render();
