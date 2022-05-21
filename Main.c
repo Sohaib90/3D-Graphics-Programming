@@ -5,6 +5,8 @@
 vec3_t cube_points[N_POINTS]; // 9x9x9 cube [-1, 1]
 vec2_t proj_cube_points[N_POINTS];
 bool is_running = true;
+int previous_frame_time = 0;
+
 float fov_factor = 640; // to scale pixels in the screen
 
 vec3_t camera_pos = {.x = 0, .y = 0, .z = -5}; // setting camera at (0,0,-5)
@@ -72,13 +74,21 @@ vec2_t perspective_project(const vec3_t point) {
 
 
 void update() {
-	/* 
-		apply a linear transformation before projecting 
+	/* Use of frame time wait for consistent animation */
+	//while (!SDL_TICKS_PASSED(SDL_GetTicks(), previous_frame_time + FRAME_TARGET_TIME));
+	//previous_frame_time = SDL_GetTicks();
+
+	int current_time = SDL_GetTicks();
+	float delta_time = (current_time - previous_frame_time) / 1000.0f;
+	previous_frame_time = current_time;
+
+	/*
+		apply a linear transformation before projecting
 		This can be rotation, translation or scale
 	*/
-	cube_rotation.x += 0.005f;
-	cube_rotation.y += 0.005f;
-	cube_rotation.z += 0.005f;
+	cube_rotation.x += 0.5f * delta_time;
+	cube_rotation.y += 0.5f * delta_time;
+	cube_rotation.z += 0.5f * delta_time;
 
 	/* project all vec3_t to vec2_t for projection (orthographic)*/
 	for (int i = 0; i < N_POINTS; i++){
