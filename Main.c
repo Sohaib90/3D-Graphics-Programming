@@ -86,7 +86,8 @@ void update() {
 		face_vertices[0] = mesh_vertices[current_mesh_face.a - 1];
 		face_vertices[1] = mesh_vertices[current_mesh_face.b - 1];
 		face_vertices[2] = mesh_vertices[current_mesh_face.c - 1];
-
+		
+		triangle_t projected_triangle;
 		// loop all three vertices of this current face and apply transformations
 		for (size_t j = 0; j < 3; j++)
 		{
@@ -94,23 +95,22 @@ void update() {
 			transformed_vertex = vec3_rotate_x(transformed_vertex, cube_rotation.x);
 			transformed_vertex = vec3_rotate_y(transformed_vertex, cube_rotation.y);
 			transformed_vertex = vec3_rotate_z(transformed_vertex, cube_rotation.z);
-
+			
+			// translate the vertex away from the camera in the z axis
+			transformed_vertex.z -= camera_pos.z;
+			
+			// perspective projection
 			vec2_t projected_point = perspective_project(transformed_vertex);
+			
+			//scale and translte the point to the middle of the screen
+			projected_point.x += WIN_WIDTH / 2;
+			projected_point.y += WIN_HEIGHT / 2;
+			projected_triangle.points[j] = projected_point;
 		}
-	}
 
-	///* project all vec3_t to vec2_t for projection (orthographic)*/
-	//for (int i = 0; i < N_POINTS; i++){
-	//	vec3_t point = cube_points[i];
-	//	// transform the point 
-	//	vec3_t transformed_point = vec3_rotate_x(point, cube_rotation.x);
-	//	transformed_point = vec3_rotate_y(transformed_point, cube_rotation.y);
-	//	transformed_point = vec3_rotate_z(transformed_point, cube_rotation.z);
-	//	// move the points away from the camera
-	//	transformed_point.z -= camera_pos.z;
-	//	// project the given point 
-	//	proj_cube_points[i] = perspective_project(transformed_point);
-	//}
+		// storing the actual coordinated of the vertices of each face
+		triangles_to_render[i] = projected_triangle;
+	}
 }
 
 void render() {
@@ -120,14 +120,19 @@ void render() {
 	//render_string("HELLO ALL!", WIN_WIDTH/2 - 250, WIN_HEIGHT / 2 - 250, 250, 100, 0x0085ca, "bold");
 	//draw_pixel(20, 20, 0xFFFFFF00);
 	
-	// Render projected points
-	//for (int i = 0; i < N_POINTS; i++){
-	//	vec2_t proj_point = proj_cube_points[i] ;
-	//	draw_rect(proj_point.x + WIN_WIDTH / 2, // translating
-	//			  proj_point.y + WIN_HEIGHT / 2, // translating 
-	//			  4, 4, 
-	//			  0xFFFFFF00);
-	//}
+	// Render projected triangles
+	for (int i = 0; i < N_MESH_FACES; i++){
+		triangle_t current_triangle = triangles_to_render[i];
+		draw_rect(current_triangle.points[0].x,
+			current_triangle.points[0].y,
+			3, 3, 0xFFFFFF00);
+		draw_rect(current_triangle.points[1].x,
+			current_triangle.points[1].y,
+			3, 3, 0xFFFFFF00);
+		draw_rect(current_triangle.points[2].x,
+			current_triangle.points[2].y,
+			3, 3, 0xFFFFFF00);
+	}
 
 	render_color_buffer();
 	clear_color_buffer(0x000000);
