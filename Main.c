@@ -1,9 +1,9 @@
 #include "display.h"
 #include "vector.h"
+#include "mesh.h"
 
-#define N_POINTS (9*9*9) 
-vec3_t cube_points[N_POINTS]; // 9x9x9 cube [-1, 1]
-vec2_t proj_cube_points[N_POINTS];
+triangle_t triangles_to_render[N_MESH_FACES];
+
 bool is_running = true;
 int previous_frame_time = 0;
 
@@ -27,18 +27,6 @@ void setup(void) {
 		WIN_WIDTH, 
 		WIN_HEIGHT
 	);
-
-	int point_count = 0;
-	// start loading array of vectors
-	for (float x = -1; x <= 1; x+= 0.25){
-		for (float y = -1; y <= 1; y += 0.25) {
-			for (float z = -1; z <= 1; z += 0.25) {
-				vec3_t new_point = { .x = x, .y = y, .z = z };
-				cube_points[point_count] = new_point;
-				point_count++;
-			}
-		}
-	}
 }
 
 void process_input(void) {
@@ -90,18 +78,39 @@ void update() {
 	cube_rotation.y += 0.5f * delta_time;
 	cube_rotation.z += 0.5f * delta_time;
 
-	/* project all vec3_t to vec2_t for projection (orthographic)*/
-	for (int i = 0; i < N_POINTS; i++){
-		vec3_t point = cube_points[i];
-		// transform the point 
-		vec3_t transformed_point = vec3_rotate_x(point, cube_rotation.x);
-		transformed_point = vec3_rotate_y(transformed_point, cube_rotation.y);
-		transformed_point = vec3_rotate_z(transformed_point, cube_rotation.z);
-		// move the points away from the camera
-		transformed_point.z -= camera_pos.z;
-		// project the given point 
-		proj_cube_points[i] = perspective_project(transformed_point);
+	for (size_t i = 0; i < N_MESH_FACES; i++)
+	{
+		face_t current_mesh_face = mesh_faces[i];
+		vec3_t face_vertices[3];
+		// index is from 1->n so (-1) should be done
+		face_vertices[0] = mesh_vertices[current_mesh_face.a - 1];
+		face_vertices[1] = mesh_vertices[current_mesh_face.b - 1];
+		face_vertices[2] = mesh_vertices[current_mesh_face.c - 1];
+
+		// loop all three vertices of this current face and apply transformations
+		for (size_t j = 0; j < 3; j++)
+		{
+			vec3_t transformed_vertex = face_vertices[j];
+			transformed_vertex = vec3_rotate_x(transformed_vertex, cube_rotation.x);
+			transformed_vertex = vec3_rotate_y(transformed_vertex, cube_rotation.y);
+			transformed_vertex = vec3_rotate_z(transformed_vertex, cube_rotation.z);
+
+			vec2_t projected_point = perspective_project(transformed_vertex);
+		}
 	}
+
+	///* project all vec3_t to vec2_t for projection (orthographic)*/
+	//for (int i = 0; i < N_POINTS; i++){
+	//	vec3_t point = cube_points[i];
+	//	// transform the point 
+	//	vec3_t transformed_point = vec3_rotate_x(point, cube_rotation.x);
+	//	transformed_point = vec3_rotate_y(transformed_point, cube_rotation.y);
+	//	transformed_point = vec3_rotate_z(transformed_point, cube_rotation.z);
+	//	// move the points away from the camera
+	//	transformed_point.z -= camera_pos.z;
+	//	// project the given point 
+	//	proj_cube_points[i] = perspective_project(transformed_point);
+	//}
 }
 
 void render() {
@@ -112,13 +121,13 @@ void render() {
 	//draw_pixel(20, 20, 0xFFFFFF00);
 	
 	// Render projected points
-	for (int i = 0; i < N_POINTS; i++){
-		vec2_t proj_point = proj_cube_points[i] ;
-		draw_rect(proj_point.x + WIN_WIDTH / 2, // translating
-				  proj_point.y + WIN_HEIGHT / 2, // translating 
-				  4, 4, 
-				  0xFFFFFF00);
-	}
+	//for (int i = 0; i < N_POINTS; i++){
+	//	vec2_t proj_point = proj_cube_points[i] ;
+	//	draw_rect(proj_point.x + WIN_WIDTH / 2, // translating
+	//			  proj_point.y + WIN_HEIGHT / 2, // translating 
+	//			  4, 4, 
+	//			  0xFFFFFF00);
+	//}
 
 	render_color_buffer();
 	clear_color_buffer(0x000000);
