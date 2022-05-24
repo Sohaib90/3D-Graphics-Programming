@@ -96,6 +96,28 @@ void draw_pixel(int x, int y, uint32_t color) {
 		color_buffer[WIN_WIDTH * y + x] = color;
 }
 
+void draw_line(float x0, float y0, float x1, float y1, uint32_t color) {
+	// Using DDA algorithm to draw a line 
+	int delta_x = x1 - x0;
+	int delta_y = y1 - y0;
+
+	int side_length = (abs(delta_x) >= abs(delta_y)) ? abs(delta_x) : abs(delta_y);
+
+	float x_inc = delta_x / (float)side_length;
+	float y_inc = delta_y / (float)side_length;
+
+	float curr_x = x0;
+	float curr_y = y0;
+
+	for (size_t i = 0; i <= side_length; i++)
+	{
+		draw_pixel(round(curr_x), round(curr_y), color);
+
+		curr_x += x_inc;
+		curr_y += y_inc;
+	}
+}
+
 void render_color_buffer() {
 
 	// Bind te texture with color buffer

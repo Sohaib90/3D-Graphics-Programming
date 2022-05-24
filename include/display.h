@@ -22,6 +22,7 @@ extern uint32_t* color_buffer;
 bool initialize_window(void);
 void draw_grid(uint32_t line_color, int offset);
 void draw_rect(int x, int y, int width, int height, uint32_t color);
+void draw_line(float x0, float y0, float x1, float y1, uint32_t color);
 void draw_pixel(int x, int y, uint32_t color);
 void render_color_buffer();
 void clear_color_buffer(uint32_t color);
