@@ -96,7 +96,7 @@ void draw_pixel(int x, int y, uint32_t color) {
 		color_buffer[WIN_WIDTH * y + x] = color;
 }
 
-void draw_line(float x0, float y0, float x1, float y1, uint32_t color) {
+void draw_line(int x0, int y0, int x1, int y1, uint32_t color) {
 	// Using DDA algorithm to draw a line 
 	int delta_x = x1 - x0;
 	int delta_y = y1 - y0;
@@ -116,6 +116,12 @@ void draw_line(float x0, float y0, float x1, float y1, uint32_t color) {
 		curr_x += x_inc;
 		curr_y += y_inc;
 	}
+}
+
+void draw_triangle(int x0, int y0, int x1, int y1, int x2, int y2, uint32_t color) {
+	draw_line(x0, y0, x1, y1, color);
+	draw_line(x1, y1, x2, y2, color); 
+	draw_line(x0, y0, x2, y2, color);	
 }
 
 void render_color_buffer() {
