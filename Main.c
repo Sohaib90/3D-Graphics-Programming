@@ -136,6 +136,14 @@ void render() {
 		draw_triangle(current_triangle.points[0].x, current_triangle.points[0].y,
 			current_triangle.points[1].x, current_triangle.points[1].y,
 			current_triangle.points[2].x, current_triangle.points[2].y, 0xFF00FF00);
+
+		draw_triangle(current_triangle.points[0].x - 500, current_triangle.points[0].y,
+			current_triangle.points[1].x - 500, current_triangle.points[1].y,
+			current_triangle.points[2].x - 500, current_triangle.points[2].y, 0xFF00FF00);
+
+		draw_triangle(current_triangle.points[0].x + 500, current_triangle.points[0].y,
+			current_triangle.points[1].x + 500, current_triangle.points[1].y,
+			current_triangle.points[2].x + 500, current_triangle.points[2].y, 0xFF00FF00);
 	}
 
 	render_color_buffer();
