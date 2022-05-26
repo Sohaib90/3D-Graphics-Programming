@@ -1,6 +1,7 @@
 #include "display.h"
 #include "vector.h"
 #include "mesh.h"
+#include "stdlib.h"
 
 triangle_t triangles_to_render[N_MESH_FACES];
 
@@ -74,9 +75,10 @@ void update() {
 		apply a linear transformation before projecting
 		This can be rotation, translation or scale
 	*/
-	cube_rotation.x += 0.5f * delta_time;
-	cube_rotation.y += 0.5f * delta_time;
-	cube_rotation.z += 0.5f * delta_time;
+	float rot = (float)rand() / (float)(RAND_MAX / 1.0f);
+	cube_rotation.x += rot * delta_time;
+	cube_rotation.y += rot * delta_time;
+	cube_rotation.z += rot * delta_time;
 
 	for (size_t i = 0; i < N_MESH_FACES; i++)
 	{
