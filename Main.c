@@ -1,9 +1,10 @@
 #include "display.h"
 #include "vector.h"
 #include "mesh.h"
+#include "array.h"
 #include "stdlib.h"
 
-triangle_t triangles_to_render[N_MESH_FACES];
+triangle_t* triangles_to_render = NULL;
 
 bool is_running = true;
 int previous_frame_time = 0;
@@ -71,6 +72,9 @@ void update() {
 	float delta_time = (current_time - previous_frame_time) / 1000.0f;
 	previous_frame_time = current_time;
 
+	// initialize the array of triangles to render
+	triangles_to_render = NULL;
+
 	/*
 		apply a linear transformation before projecting
 		This can be rotation, translation or scale
@@ -111,7 +115,7 @@ void update() {
 		}
 
 		// storing the actual coordinated of the vertices of each face
-		triangles_to_render[i] = projected_triangle;
+		array_push(triangles_to_render, projected_triangle);
 	}
 }
 
@@ -123,7 +127,8 @@ void render() {
 	//draw_pixel(20, 20, 0xFFFFFF00);
 	
 	// Render projected triangles
-	for (int i = 0; i < N_MESH_FACES; i++){
+	int num_triangles = array_length(triangles_to_render);
+	for (int i = 0; i < num_triangles; i++){
 		triangle_t current_triangle = triangles_to_render[i];
 		draw_rect(current_triangle.points[0].x,
 			current_triangle.points[0].y,
@@ -139,6 +144,9 @@ void render() {
 			current_triangle.points[1].x, current_triangle.points[1].y,
 			current_triangle.points[2].x, current_triangle.points[2].y, 0xFF00FF00);
 	}
+
+	// clear the array of triangles I render (clean up)
+	array_free(triangles_to_render);
 
 	render_color_buffer();
 	clear_color_buffer(0x000000);
