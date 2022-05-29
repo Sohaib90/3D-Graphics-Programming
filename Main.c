@@ -12,7 +12,6 @@ int previous_frame_time = 0;
 float fov_factor = 640; // to scale pixels in the screen
 
 vec3_t camera_pos = {.x = 0, .y = 0, .z = -5}; // setting camera at (0,0,-5)
-vec3_t cube_rotation = { .x = 0, .y = 0, .z = 0 }; // for degree of freedom (to increase/decrease)
 
 void setup(void) {
 	color_buffer = malloc(sizeof(uint32_t) * WIN_WIDTH * WIN_HEIGHT);
@@ -29,6 +28,9 @@ void setup(void) {
 		WIN_WIDTH, 
 		WIN_HEIGHT
 	);
+
+	// loads the coube values in the mesh data structure
+	load_mesh_cube_data();
 }
 
 void process_input(void) {
@@ -80,27 +82,27 @@ void update() {
 		This can be rotation, translation or scale
 	*/
 	float rot = (float)rand() / (float)(RAND_MAX / 1.0f);
-	cube_rotation.x += rot * delta_time;
-	cube_rotation.y += rot * delta_time;
-	cube_rotation.z += rot * delta_time;
+	mesh.rotation.x += rot * delta_time;
+	mesh.rotation.y += rot * delta_time;
+	mesh.rotation.z += rot * delta_time;
 
-	for (size_t i = 0; i < N_MESH_FACES; i++)
+	for (size_t i = 0; i < array_length(mesh.faces); i++)
 	{
-		face_t current_mesh_face = mesh_faces[i];
+		face_t current_mesh_face = mesh.faces[i];
 		vec3_t face_vertices[3];
 		// index is from 1->n so (-1) should be done
-		face_vertices[0] = mesh_vertices[current_mesh_face.a - 1];
-		face_vertices[1] = mesh_vertices[current_mesh_face.b - 1];
-		face_vertices[2] = mesh_vertices[current_mesh_face.c - 1];
+		face_vertices[0] = mesh.vertices[current_mesh_face.a - 1];
+		face_vertices[1] = mesh.vertices[current_mesh_face.b - 1];
+		face_vertices[2] = mesh.vertices[current_mesh_face.c - 1];
 		
 		triangle_t projected_triangle;
 		// loop all three vertices of this current face and apply transformations
 		for (size_t j = 0; j < 3; j++)
 		{
 			vec3_t transformed_vertex = face_vertices[j];
-			transformed_vertex = vec3_rotate_x(transformed_vertex, cube_rotation.x);
-			transformed_vertex = vec3_rotate_y(transformed_vertex, cube_rotation.y);
-			transformed_vertex = vec3_rotate_z(transformed_vertex, cube_rotation.z);
+			transformed_vertex = vec3_rotate_x(transformed_vertex, mesh.rotation.x);
+			transformed_vertex = vec3_rotate_y(transformed_vertex, mesh.rotation.y);
+			transformed_vertex = vec3_rotate_z(transformed_vertex, mesh.rotation.z);
 			
 			// translate the vertex away from the camera in the z axis
 			transformed_vertex.z -= camera_pos.z;
@@ -155,6 +157,13 @@ void render() {
 
 }
 
+// free memory resources which are allocated using dynmaic allocation 
+void free_resources() {
+	free(color_buffer);
+	array_free(mesh.vertices);
+	array_free(mesh.faces);
+}
+
 // For SDL to work, the main function needs to have two arguments 
 int main(int argc, char* argv[])
 {
@@ -171,5 +180,7 @@ int main(int argc, char* argv[])
 	}
 
 	destroy_window();
+	free_resources();
+
 	return 0;
 }
