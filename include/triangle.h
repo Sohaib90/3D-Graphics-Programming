@@ -3,11 +3,14 @@
 
 #include "vector.h"
 
-typedef struct {
-	int a;
-	int b;
-	int c;
-} face_t;
+typedef union {
+	int face_num[3];
+	struct {
+		int a;
+		int b;
+		int c;
+	};
+}face_t;
 
 typedef struct {
 	vec2_t points[3];

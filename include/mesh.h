@@ -19,5 +19,6 @@ typedef struct {
 
 extern mesh_t mesh; // global variable mesh which will be used everywhere
 void load_mesh_cube_data(void);
+void load_obj_file(const char* filename);
 
 #endif

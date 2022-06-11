@@ -29,8 +29,8 @@ void setup(void) {
 		WIN_HEIGHT
 	);
 
-	// loads the coube values in the mesh data structure
-	load_mesh_cube_data();
+	// loads the obj file into vertices and meshes 
+	load_obj_file("assets/f22.obj");
 }
 
 void process_input(void) {
@@ -66,13 +66,24 @@ vec2_t perspective_project(const vec3_t point) {
 
 
 void update() {
+
+	// Wait some time until the reach the target frame time in milliseconds
+	int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - previous_frame_time);
+
+	// Only delay execution if we are running too fast
+	if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME) {
+		SDL_Delay(time_to_wait);
+	}
+
+	previous_frame_time = SDL_GetTicks();
+
 	/* Use of frame time wait for consistent animation */
 	//while (!SDL_TICKS_PASSED(SDL_GetTicks(), previous_frame_time + FRAME_TARGET_TIME));
 	//previous_frame_time = SDL_GetTicks();
 
-	int current_time = SDL_GetTicks();
+	/*int current_time = SDL_GetTicks();
 	float delta_time = (current_time - previous_frame_time) / 1000.0f;
-	previous_frame_time = current_time;
+	previous_frame_time = current_time;*/
 
 	// initialize the array of triangles to render
 	triangles_to_render = NULL;
@@ -81,10 +92,9 @@ void update() {
 		apply a linear transformation before projecting
 		This can be rotation, translation or scale
 	*/
-	float rot = (float)rand() / (float)(RAND_MAX / 1.0f);
-	mesh.rotation.x += rot * delta_time;
-	mesh.rotation.y += rot * delta_time;
-	mesh.rotation.z += rot * delta_time;
+	mesh.rotation.x += 0.01;
+	mesh.rotation.y += 0.0;
+	mesh.rotation.z += 0.0;
 
 	for (size_t i = 0; i < array_length(mesh.faces); i++)
 	{
